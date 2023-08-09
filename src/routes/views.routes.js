@@ -28,10 +28,5 @@ viewsRouter.get("/realtimeproducts", (req, res) => {
     }
 });
 
-socket.on('addProduct', (productData) => {
-    res.render("realTimeProducts", { productData });
-    io.emit('productAdded', productData);
-});
-
 
 export default viewsRouter;

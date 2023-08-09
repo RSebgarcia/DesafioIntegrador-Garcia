@@ -1,18 +1,17 @@
-<div>
-    <h1 class="text-center mt-4 mb-5">Productos estaticos</h1>
-    <ul class="container-fluid d-flex align-items-center justify-content-center mt-4">
+<h1 class="text-center mt-4 mb-5">Productos Estaticos</h1>
+<section class="container-fluid d-flex align-items-center  mt-4">
+    <div class="row mx-4 justify-content-center ">
         {{#each products}}
-        <li class="row mx-4">
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <h3>{{title}}</h3>
-                    <p>{{description}}</p>
-                    <p>Code: {{code}}</p>
-                </div>
-        </li>
+        <div class="card col-4 mx-4 mb-4" style="width: 18rem;">
+            <div class="card-body">
+                <h3>{{title}}</h3>
+                <p>{{description}}</p>
+                <p>Code: {{code}}</p>
+            </div>
+        </div>
         {{/each}}
-    </ul>
-</div>
+    </div>
+</section>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/home.js"></script>
