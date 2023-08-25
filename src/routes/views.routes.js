@@ -1,32 +1,29 @@
 import express from "express";
-import fs from "fs"
-import path from 'path'
 import __dirname from '../utils.js';
+import ProductManager from "../dao/ProductManager.js";
+
 
 const viewsRouter = express.Router();
-const productsFilePath = path.join(__dirname, "public/storage/products.json");
-
-viewsRouter.get("/", (req, res) => {
-    try {
-        const productsData = fs.readFileSync(productsFilePath, "utf-8");
-        const products = JSON.parse(productsData);
+const PM = new ProductManager();
+viewsRouter.get("/", async(req, res) => {
+    
+        const products =await PM.getAllProducts();
         res.render("home", { products });
-    } catch (error) {
-        console.error("Error reading products file:", error);
-        res.status(500).send("Failed to retrieve products");
-    }
-});
+    });
 
 viewsRouter.get("/realtimeproducts", (req, res) => {
     try {
-        const productsData = fs.readFileSync(productsFilePath, "utf-8");
-        const products = JSON.parse(productsData);
-        res.render("realTimeProducts", { products });
+        const productsData = PM.getAllProducts();
+        res.render("realTimeProducts", { productsData });
     } catch (error) {
         console.error("Error reading products file:", error);
         res.status(500).send("Failed to retrieve products");
     }
 });
+
+viewsRouter.get("/chat", (req,res)=>{
+    res.render("chat")
+})
 
 
 export default viewsRouter;

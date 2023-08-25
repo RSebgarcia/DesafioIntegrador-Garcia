@@ -3,9 +3,11 @@ import __dirname from "./utils.js";
 import exphbs from "express-handlebars";
 import viewsRouter from "./routes/views.routes.js"
 import { Server } from "socket.io";
-import fs from "fs"
-import path from "path";
-
+import productsRouter from "./routes/products.router.js";
+import cartsRouter from "./routes/carts.router.js";
+import mongoose from "mongoose";
+import { productModel } from "./dao/models/product.model.js";
+import ChatManager from "./dao/ChatManager.js";
 
 const app = express();
 const puerto = 8080;
@@ -21,26 +23,24 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", viewsRouter);
+//agrego mongo
+mongoose.connect('mongodb+srv://rodrigarcia455:coder123@clustercoder.zknoder.mongodb.net/PracticaIntegradora?retryWrites=true&w=majority');
+
+app.use('/api/products', productsRouter)
+app.use('/api/carts', cartsRouter)
+
+const CM= new ChatManager()
 
 //Defino los mensajes de mi Servidor Socket
-io.on('connection', (socket) => {
+io.on('connection',  (socket) => {
     console.log('A user connected');
-    socket.on('addProduct', (productData) => {
-        const productsFilePath = path.join(__dirname, "public/storage/products.json");
-        fs.readFile(productsFilePath, 'utf8', (err, data) => {
-            if (err) {
-                console.error('Error reading products file:', err);
-                return;
-            }
-            const existingProducts = JSON.parse(data);
-            existingProducts.push(productData);
-            fs.writeFile(productsFilePath, JSON.stringify(existingProducts, null, 2), (err) => {
-                if (err) {
-                    console.error('Error writing products file:', err);
-                    return;
-                }
-                io.emit('newProductAdded', productData);
-            });
-        });
-    });
+
+    socket.on("newMessage", async (data)=>{
+        CM.createMessage(data)
+        const messages = await CM.getMessages();
+        socket.emit("messages", messages)
+    })
 });
+
+
+
